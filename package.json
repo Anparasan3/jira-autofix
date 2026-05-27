@@ -9,21 +9,28 @@
     "type": "git",
     "url": "https://github.com/Anparasan3/jira-autofix"
   },
+  "main": "./dist/lib.js",
+  "exports": {
+    ".": "./dist/lib.js"
+  },
   "bin": {
-    "jira-autofix": "./src/index.ts",
-    "jira-autofix-fetch": "./src/stages/fetch.ts",
-    "jira-autofix-fix": "./src/stages/fix.ts",
-    "jira-autofix-open-prs": "./src/stages/openPrs.ts"
+    "jira-autofix": "./dist/index.js",
+    "jira-autofix-fetch": "./dist/stages/fetch.js",
+    "jira-autofix-fix": "./dist/stages/fix.js",
+    "jira-autofix-open-prs": "./dist/stages/openPrs.js"
   },
   "files": [
+    "dist",
     "src"
   ],
   "scripts": {
+    "build": "bun build src/lib.ts src/index.ts src/stages/fetch.ts src/stages/fix.ts src/stages/openPrs.ts --outdir dist --target bun",
     "start": "bun run src/index.ts",
     "fetch": "bun run src/stages/fetch.ts",
     "fix": "bun run src/stages/fix.ts",
     "open-prs": "bun run src/stages/openPrs.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run typecheck && bun run build && bun test ./tests/unit/"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0"

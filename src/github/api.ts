@@ -57,7 +57,10 @@ function githubHeaders(token: string): Record<string, string> {
  */
 export async function createPullRequest(opts: PullRequestOptions): Promise<string> {
   const parsed = parseGitHubRemote(opts.repoRemote);
-  if (!parsed) throw new Error(`Cannot parse GitHub remote: ${opts.repoRemote}`);
+  if (!parsed) {
+    console.error(`  ✗  Cannot parse GitHub remote: ${opts.repoRemote}`);
+    throw new Error("Cannot parse GitHub remote", { cause: opts.repoRemote });
+  }
   const { owner, repo } = parsed;
 
   const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls`, {
@@ -72,12 +75,15 @@ export async function createPullRequest(opts: PullRequestOptions): Promise<strin
   });
 
   if (!res.ok) {
-    throw new Error(`GitHub PR creation failed ${res.status}: ${await res.text()}`);
+    const body = await res.text();
+    console.error(`  ✗  GitHub PR creation failed  status=${res.status}  body=${body}`);
+    throw new Error("GitHub PR creation failed", { cause: { status: res.status, body } });
   }
 
   const raw: unknown = await res.json();
   if (!isGitHubPrResponse(raw)) {
-    throw new Error(`Unexpected GitHub PR response shape: ${JSON.stringify(raw)}`);
+    console.error(`  ✗  Unexpected GitHub PR response shape: ${JSON.stringify(raw)}`);
+    throw new Error("Unexpected GitHub PR response shape", { cause: raw });
   }
   return raw.html_url;
 }

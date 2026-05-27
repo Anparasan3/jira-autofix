@@ -64,9 +64,14 @@ export class JiraClient {
       },
     });
     if (!res.ok) {
-      throw new Error(
-        `Jira ${options.method ?? "GET"} ${path} → ${res.status}: ${await res.text()}`,
+      const body = await res.text();
+      const method = options.method ?? "GET";
+      console.error(
+        `  ✗  Jira API error  method=${method}  path=${path}  status=${res.status}  body=${body}`,
       );
+      throw new Error("Jira API request failed", {
+        cause: { method, path, status: res.status, body },
+      });
     }
     return res.json() as Promise<T>;
   }

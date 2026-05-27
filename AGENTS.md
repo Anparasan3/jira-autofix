@@ -75,6 +75,11 @@ These rules apply to every file in this package.
 - **Pure helpers** — keep utilities (type guards, formatters, parsers) free of side effects
 - **Single responsibility** — one clear job per function; split if it grows complex
 
+### Data & errors
+- **Dates** — use `date-fns` or `dayjs`; never write native `Date` arithmetic by hand
+- **Money / math** — use `Decimal.js`; never rely on floating-point for currency or precise values
+- **Error handling** — prefer `log + return` over `throw`; use static message strings and pass the original error as `cause`
+
 ---
 
 ## Coding rules
@@ -84,6 +89,7 @@ These rules apply to every file in this package.
 - **No external CLI deps** — the package must work with only Bun installed (no `gh`, `jq`, `curl`)
 - **Config via env** — all configuration comes from `loadConfig()` in `src/config.ts`; never read `process.env` directly elsewhere
 - **Always typecheck** — run `bun run typecheck` after every change and fix all errors
+- **Small, focused changes** — fix exactly what the issue describes; prefer a targeted edit over rewriting an entire file
 
 ---
 
@@ -115,6 +121,16 @@ bun run fetch                              # stage 1 → jira-issues.json
 DRY_RUN=true bun run fix                   # stage 2 → branches.json (no push)
 bun run open-prs                           # stage 3 → open PRs
 ```
+
+---
+
+## Agent behavior rules
+
+1. **Follow allowed commands** — respect every restriction listed in the target project's `AGENTS.md`
+2. **Ask before deploying** — always get explicit approval before any production deployment
+3. **No secrets in commits** — never commit API keys, tokens, passwords, or credentials
+4. **Small, focused changes** — fix exactly what the issue describes; prefer a targeted edit over a large rewrite
+5. **Typecheck after every change** — run `bun run typecheck` and fix all errors before finishing
 
 ---
 

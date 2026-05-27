@@ -164,7 +164,10 @@ export async function generateFix(
     try {
       return await client.messages.create(payload);
     } catch (err) {
-      if (attempt >= 3) throw err;
+      if (attempt >= 3) {
+        console.error("  ✗  Claude API call failed after 4 attempts");
+        throw new Error("Claude API call failed after retries", { cause: err });
+      }
       const wait = 2 ** attempt * 2000; // 2 s, 4 s, 8 s
       console.log(`  ⚠  API error (attempt ${attempt + 1}/4) — retrying in ${wait / 1000}s…`);
       await new Promise((r) => setTimeout(r, wait));
