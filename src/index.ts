@@ -32,7 +32,13 @@ import { generateFix } from "./agents/claude";
 import { loadConfig } from "./config";
 import { buildContext } from "./context";
 import { createPullRequest, getPullRequestUrl } from "./github/api";
-import { git, issueToBranch, remoteBranchExists } from "./github/gitUtils";
+import {
+  fetchOrigin,
+  getRemoteUrl,
+  git,
+  issueToBranch,
+  remoteBranchExists,
+} from "./github/gitUtils";
 import { JiraClient } from "./jiraClient";
 import type { JiraIssue } from "./jiraClient";
 
@@ -61,7 +67,7 @@ async function processIssue(
   context: string,
   defaultBranch: string,
   jira: JiraClient,
-  repoRemote: string,
+  repoRemote: string | null,
 ): Promise<void> {
   const branch = issueToBranch(issue);
   const title = `fix(${issue.key}): ${issue.summary}`;
@@ -70,6 +76,11 @@ async function processIssue(
   console.log(`\n→ [${issue.key}] ${issue.summary}`);
 
   if (remoteBranchExists(branch, ROOT)) {
+    if (!repoRemote) {
+      console.log("  ⏭  Skipping — branch exists on remote (no remote URL to check PR)");
+      return;
+    }
+
     // Branch already pushed — check whether a PR exists before skipping
     const existingPr = await getPullRequestUrl({ token: cfg.ghToken, repoRemote, head: branch });
 
@@ -132,6 +143,11 @@ async function processIssue(
       return;
     }
 
+    if (!repoRemote) {
+      console.log("  ⚠  No git remote configured — skipping push and PR");
+      return;
+    }
+
     git("add .", ROOT);
     git(
       `commit -m "fix(${issue.key}): ${issue.summary.replace(/"/g, "'")}\n\nCloses ${issue.key}\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"`,
@@ -173,9 +189,9 @@ async function main() {
     apiToken: cfg.jiraApiToken,
   });
 
-  git("fetch origin", ROOT);
+  fetchOrigin(ROOT);
   const defaultBranch = git("rev-parse --abbrev-ref HEAD", ROOT);
-  const repoRemote = git("remote get-url origin", ROOT);
+  const repoRemote = getRemoteUrl(ROOT);
 
   const issues = await jira.fetchOpenIssues(cfg.jiraProjectKey, cfg.maxIssues);
   if (issues.length === 0) {

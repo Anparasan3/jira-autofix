@@ -19,7 +19,7 @@ import { dirname, join } from "path";
 import { generateFix } from "../agents/claude";
 import { loadConfig } from "../config";
 import { buildContext } from "../context";
-import { git, issueToBranch, remoteBranchExists } from "../github/gitUtils";
+import { fetchOrigin, git, issueToBranch, remoteBranchExists } from "../github/gitUtils";
 import type { JiraIssue } from "../jiraClient";
 import type { BranchRecord } from "../types";
 
@@ -40,7 +40,7 @@ const context = buildContext(ROOT);
 
 // ── Git baseline ──────────────────────────────────────────────────────────
 
-git("fetch origin", ROOT);
+fetchOrigin(ROOT);
 const defaultBranch = git("rev-parse --abbrev-ref HEAD", ROOT);
 
 // ── Process issues ────────────────────────────────────────────────────────
