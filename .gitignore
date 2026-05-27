@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Bun lockfile artifacts
+bun.lockb
+
+# Environment — never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Stage output files (written at runtime, not source)
+jira-issues.json
+branches.json
+
+# TypeScript build output (we use noEmit, but just in case)
+dist/
+*.js.map
+
+# macOS
+.DS_Store
