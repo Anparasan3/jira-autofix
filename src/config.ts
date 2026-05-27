@@ -9,7 +9,14 @@
  *                  Set locally in .env or as a repo secret in GitHub Actions.
  *   GITHUB_TOKEN — Bot token auto-injected by GitHub Actions every run.
  *                  No setup needed in CI.
+ *
+ * GitHub transport (GITHUB_MODE):
+ *   "rest" (default) — calls the GitHub REST API directly using GH_PAT / GITHUB_TOKEN.
+ *   "cli"            — shells out to the `gh` CLI (must be installed and authenticated).
+ *                      GH_PAT / GITHUB_TOKEN are not required in this mode.
  */
+
+export type GithubMode = "cli" | "rest";
 
 export interface Config {
   // Jira
@@ -27,6 +34,7 @@ export interface Config {
 
   // GitHub
   ghToken: string;
+  githubMode: GithubMode;
 
   // Behaviour
   baseBranch: string;
@@ -57,14 +65,17 @@ export function loadConfig(): Config {
     agentModel: process.env["JIRA_AUTOFIX_MODEL"] ?? "claude-sonnet-4-6",
     agentMaxTokens: Number(process.env["JIRA_AUTOFIX_MAX_TOKENS"] ?? "8096"),
 
-    // GitHub — GH_PAT takes priority (local dev), then GITHUB_TOKEN (CI)
-    ghToken:
-      process.env["GH_PAT"] ||
-      process.env["GITHUB_TOKEN"] ||
-      (() => {
-        missing.push("GH_PAT or GITHUB_TOKEN");
-        return "";
-      })(),
+    // GitHub transport — "cli" or "rest" (default: "rest")
+    githubMode: (process.env["GITHUB_MODE"] ?? "rest") as GithubMode,
+
+    // GitHub token — GH_PAT takes priority (local dev), then GITHUB_TOKEN (CI).
+    // Only required in REST mode; skipped in CLI mode (gh CLI manages its own auth).
+    ghToken: (() => {
+      const token = process.env["GH_PAT"] || process.env["GITHUB_TOKEN"] || "";
+      const mode = (process.env["GITHUB_MODE"] ?? "rest") as GithubMode;
+      if (!token && mode === "rest") missing.push("GH_PAT or GITHUB_TOKEN");
+      return token;
+    })(),
 
     // Behaviour
     baseBranch: process.env["BASE_BRANCH"] ?? "master",

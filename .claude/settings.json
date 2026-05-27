@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Edit(/.claude/skills/update-model/**)"
+      "Edit(/.claude/skills/update-model/**)",
+      "Bash(bun run *)"
     ]
   },
   "hooks": {

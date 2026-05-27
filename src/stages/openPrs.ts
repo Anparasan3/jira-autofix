@@ -55,6 +55,7 @@ for (const record of records) {
   try {
     // Skip if a PR is already open for this branch
     const existingPr = await getPullRequestUrl({
+      mode: cfg.githubMode,
       token: cfg.ghToken,
       repoRemote,
       head: record.branch,
@@ -66,6 +67,7 @@ for (const record of records) {
     }
 
     const prUrl = await createPullRequest({
+      mode: cfg.githubMode,
       token: cfg.ghToken,
       repoRemote,
       title: record.title,

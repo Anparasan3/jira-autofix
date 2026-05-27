@@ -1,15 +1,40 @@
 /**
- * GitHub REST API helpers.
- * Uses fetch directly — no gh CLI required, works anywhere a token is available.
+ * GitHub API helpers — supports two transports:
+ *
+ *   "rest" (default) — calls the GitHub REST API directly via fetch().
+ *                      Requires GH_PAT or GITHUB_TOKEN.
+ *
+ *   "cli"            — shells out to the `gh` CLI (must be installed and
+ *                      authenticated with `gh auth login`).
+ *                      Does NOT require GH_PAT / GITHUB_TOKEN.
+ *
+ * Select the transport by setting opts.mode (sourced from GITHUB_MODE env var).
  */
 
-// ── Response interfaces ─────────────────────────────────────────────────────
+import { execSync } from "child_process";
+import type { GithubMode } from "../config";
+
+// ── Shared types ────────────────────────────────────────────────────────────
+
+export interface PullRequestOptions {
+  mode: GithubMode;
+  /** REST mode: required. CLI mode: ignored (gh uses its own auth). */
+  token: string;
+  /** REST mode: required for repo parsing. CLI mode: ignored. */
+  repoRemote: string;
+  title: string;
+  body: string;
+  base: string;
+  head: string;
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// REST transport
+// ════════════════════════════════════════════════════════════════════════════
 
 interface GitHubPrResponse {
   html_url: string;
 }
-
-// ── Type predicates ─────────────────────────────────────────────────────────
 
 function isGitHubPrResponse(val: unknown): val is GitHubPrResponse {
   return (
@@ -19,20 +44,6 @@ function isGitHubPrResponse(val: unknown): val is GitHubPrResponse {
     typeof (val as Record<string, unknown>)["html_url"] === "string"
   );
 }
-
-// ── Public interface ────────────────────────────────────────────────────────
-
-export interface PullRequestOptions {
-  token: string;
-  /** e.g. https://github.com/owner/repo.git  or  git@github.com:owner/repo.git */
-  repoRemote: string;
-  title: string;
-  body: string;
-  base: string;
-  head: string;
-}
-
-// ── Internal helpers ────────────────────────────────────────────────────────
 
 function parseGitHubRemote(remote: string): { owner: string; repo: string } | null {
   const match = remote.match(/github\.com[/:]([\w.-]+)\/([\w.-]+?)(?:\.git)?$/);
@@ -49,13 +60,7 @@ function githubHeaders(token: string): Record<string, string> {
   };
 }
 
-// ── Public functions ────────────────────────────────────────────────────────
-
-/**
- * Creates a GitHub pull request and returns its HTML URL.
- * Throws if the API call fails or returns an unexpected shape.
- */
-export async function createPullRequest(opts: PullRequestOptions): Promise<string> {
+async function createPullRequestViaRest(opts: PullRequestOptions): Promise<string> {
   const parsed = parseGitHubRemote(opts.repoRemote);
   if (!parsed) {
     console.error(`  ✗  Cannot parse GitHub remote: ${opts.repoRemote}`);
@@ -88,10 +93,7 @@ export async function createPullRequest(opts: PullRequestOptions): Promise<strin
   return raw.html_url;
 }
 
-/**
- * Returns the URL of the first open PR for the given head branch, or null if none exists.
- */
-export async function getPullRequestUrl(
+async function getPullRequestUrlViaRest(
   opts: Pick<PullRequestOptions, "token" | "repoRemote" | "head">,
 ): Promise<string | null> {
   const parsed = parseGitHubRemote(opts.repoRemote);
@@ -110,4 +112,75 @@ export async function getPullRequestUrl(
 
   const first: unknown = raw[0];
   return isGitHubPrResponse(first) ? first.html_url : null;
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// CLI transport  (gh CLI)
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Shell out to the gh CLI.
+ * Returns stdout trimmed, or throws with stderr on non-zero exit.
+ */
+function ghExec(args: string): string {
+  return execSync(`gh ${args}`, { encoding: "utf8" }).trim();
+}
+
+async function createPullRequestViaCli(opts: PullRequestOptions): Promise<string> {
+  // gh pr create prints the PR URL to stdout on success.
+  // Use --no-maintainer-edit to avoid interactive prompts in CI.
+  const url = ghExec(
+    [
+      "pr create",
+      `--title ${JSON.stringify(opts.title)}`,
+      `--body ${JSON.stringify(opts.body)}`,
+      `--base ${opts.base}`,
+      `--head ${opts.head}`,
+    ].join(" "),
+  );
+
+  if (!url.startsWith("http")) {
+    console.error(`  ✗  gh pr create returned unexpected output: ${url}`);
+    throw new Error("gh pr create returned unexpected output", { cause: url });
+  }
+  return url;
+}
+
+async function getPullRequestUrlViaCli(head: string): Promise<string | null> {
+  try {
+    // gh pr list with JSON output; jq-like --jq extracts the first URL.
+    const url = ghExec(`pr list --head ${head} --state open --json url --jq ".[0].url"`);
+    return url && url !== "null" ? url : null;
+  } catch {
+    return null;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// Public façade — dispatches to the selected transport
+// ════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Creates a GitHub pull request and returns its HTML URL.
+ * Dispatches to the REST API or `gh` CLI based on opts.mode.
+ */
+export async function createPullRequest(opts: PullRequestOptions): Promise<string> {
+  if (opts.mode === "cli") {
+    console.log(`  🔧  GitHub transport: gh CLI`);
+    return createPullRequestViaCli(opts);
+  }
+  return createPullRequestViaRest(opts);
+}
+
+/**
+ * Returns the URL of the first open PR for the given head branch, or null if none exists.
+ * Dispatches to the REST API or `gh` CLI based on opts.mode.
+ */
+export async function getPullRequestUrl(
+  opts: Pick<PullRequestOptions, "mode" | "token" | "repoRemote" | "head">,
+): Promise<string | null> {
+  if (opts.mode === "cli") {
+    return getPullRequestUrlViaCli(opts.head);
+  }
+  return getPullRequestUrlViaRest(opts);
 }
