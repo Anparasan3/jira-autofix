@@ -10,8 +10,10 @@
     "url": "https://github.com/Anparasan3/jira-autofix"
   },
   "main": "./dist/lib.js",
+  "types": "./dist/lib.d.ts",
   "exports": {
-    ".": "./dist/lib.js"
+    ".": "./dist/lib.js",
+    "./server": "./dist/server.js"
   },
   "bin": {
     "jira-autofix": "./dist/index.js",
@@ -24,8 +26,9 @@
     "src"
   ],
   "scripts": {
-    "build": "bun build src/lib.ts src/index.ts src/stages/fetch.ts src/stages/fix.ts src/stages/openPrs.ts --outdir dist --target bun",
+    "build": "bun build src/lib.ts src/index.ts src/server.ts src/stages/fetch.ts src/stages/fix.ts src/stages/openPrs.ts --outdir dist --target bun && bunx tsc -p tsconfig.build.json",
     "start": "bun run src/index.ts",
+    "serve": "bun run src/index.ts --mode=rest",
     "fetch": "bun run src/stages/fetch.ts",
     "fix": "bun run src/stages/fix.ts",
     "open-prs": "bun run src/stages/openPrs.ts",
