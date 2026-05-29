@@ -1,12 +1,18 @@
 /**
  * @anpu/jira-autofix — public library API
  *
- * Import from this file when using jira-autofix programmatically
- * rather than as a CLI. All types and core functions are exported here.
+ * Default import — fluent API:
+ *   import autofixer from "@anpu/jira-autofix";
+ *   await autofixer.init({ schedule: "0 9 * * 1-5" }).start();
+ *   autofixer.init().generateWorkflow();
  *
- * @example
- * import { JiraClient, buildContext, runPipeline } from '@anpu/jira-autofix'
+ * Named imports — lower-level utilities:
+ *   import { runPipeline, buildPrBody, issueToBranch } from "@anpu/jira-autofix";
  */
+
+// ── Fluent API (default export) ────────────────────────────────────────────
+export { default } from "./autofixer";
+export type { Autofixer, AutofixerOptions } from "./autofixer";
 
 // ── Jira ───────────────────────────────────────────────────────────────────
 export { JiraClient } from "./jiraClient";
