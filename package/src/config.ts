@@ -40,6 +40,12 @@ export interface Config {
   baseBranch: string;
   maxIssues: number;
   dryRun: boolean;
+
+  // Pipeline stage controls
+  disableFetch: boolean; // skip Jira API call — return empty result immediately
+  disableBranchSwitch: boolean; // skip branch creation/checkout
+  disableAgentFix: boolean; // skip Claude agent — no file changes
+  disableRaisePR: boolean; // skip PR creation and Jira linking
 }
 
 export function loadConfig(): Config {
@@ -81,6 +87,12 @@ export function loadConfig(): Config {
     baseBranch: process.env["BASE_BRANCH"] ?? "master",
     maxIssues: Number(process.env["MAX_ISSUES"] ?? "3"),
     dryRun: process.env["DRY_RUN"] === "true",
+
+    // Pipeline stage controls (all default false — full pipeline runs)
+    disableFetch: process.env["DISABLE_FETCH"] === "true",
+    disableBranchSwitch: process.env["DISABLE_BRANCH_SWITCH"] === "true",
+    disableAgentFix: process.env["DISABLE_AGENT_FIX"] === "true",
+    disableRaisePR: process.env["DISABLE_RAISE_PR"] === "true",
   };
 
   if (missing.length > 0) {

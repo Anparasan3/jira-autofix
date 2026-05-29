@@ -88,9 +88,19 @@ export async function fixBranch(
     // Branch doesn't exist locally — nothing to do
   }
 
+  if (cfg.disableBranchSwitch) {
+    console.log("  ⏭  Branch switch disabled — skipping");
+    return { skipped: true, pushed: false };
+  }
+
   git(`checkout -b ${branch}`, root);
 
   try {
+    if (cfg.disableAgentFix) {
+      console.log("  ⏭  Agent fix disabled — skipping");
+      return { skipped: true, pushed: false };
+    }
+
     const changes = await generateFix(
       issue,
       context,
@@ -200,6 +210,11 @@ async function processIssue(
   }
 
   // ── Open PR ────────────────────────────────────────────────────────────────
+  if (cfg.disableRaisePR) {
+    console.log("  ⏭  PR creation disabled — branch pushed, no PR raised");
+    return { key: issue.key, summary: issue.summary, status: "skipped" };
+  }
+
   const prUrl = await createPullRequest({
     mode: cfg.githubMode,
     token: cfg.ghToken,
@@ -237,6 +252,17 @@ export async function runPipeline(cfg: Config): Promise<PipelineResult> {
   fetchOrigin(ROOT);
   const defaultBranch = git("rev-parse --abbrev-ref HEAD", ROOT);
   const repoRemote = getRemoteUrl(ROOT);
+
+  if (cfg.disableFetch) {
+    console.log("⏭  Jira fetch disabled — no issues to process.");
+    return {
+      project: cfg.jiraProjectKey,
+      model: cfg.agentModel,
+      dryRun: cfg.dryRun,
+      issuesFound: 0,
+      results: [],
+    };
+  }
 
   const issues = await jira.fetchOpenIssues(cfg.jiraProjectKey, cfg.maxIssues);
 

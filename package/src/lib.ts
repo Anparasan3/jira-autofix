@@ -12,7 +12,7 @@
 
 // ── Fluent API (default export) ────────────────────────────────────────────
 export { default } from "./autofixer";
-export type { Autofixer, AutofixerOptions } from "./autofixer";
+export type { Autofixer, AutofixerOptions, DisableStage } from "./autofixer";
 
 // ── Jira ───────────────────────────────────────────────────────────────────
 export { JiraClient } from "./jiraClient";

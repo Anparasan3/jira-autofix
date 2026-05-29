@@ -20,3 +20,5 @@ dist/
 # macOS
 .DS_Store
 bun.lock
+
+jira-autofix.yml

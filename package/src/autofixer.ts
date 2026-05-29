@@ -26,6 +26,18 @@ import type { PipelineResult } from "./pipeline";
 import { runPipeline } from "./pipeline";
 import { startServer } from "./server";
 
+// ── Stage control ─────────────────────────────────────────────────────────────
+
+/**
+ * Pipeline stages that can be individually disabled via the `disable` option.
+ *
+ * - "fetch"        — skip Jira API call; pipeline returns empty immediately
+ * - "branchSwitch" — skip git branch creation/checkout
+ * - "agentFix"     — skip Claude agent; no file changes generated
+ * - "raisePR"      — skip GitHub PR creation and Jira linking
+ */
+export type DisableStage = "fetch" | "branchSwitch" | "agentFix" | "raisePR";
+
 // ── Options ──────────────────────────────────────────────────────────────────
 
 export interface AutofixerOptions {
@@ -45,6 +57,11 @@ export interface AutofixerOptions {
   githubMode?: GithubMode;
   /** HTTP port for serve() (overrides PORT env var). */
   port?: number;
+  /**
+   * Pipeline stages to skip.
+   * @example disable: ["fetch", "raisePR"]
+   */
+  disable?: DisableStage[];
 }
 
 // ── Autofixer class ───────────────────────────────────────────────────────────
@@ -81,6 +98,10 @@ export class Autofixer {
       agentModel: this.opts.model ?? base.agentModel,
       agentMaxTokens: this.opts.maxTokens ?? base.agentMaxTokens,
       githubMode: this.opts.githubMode ?? base.githubMode,
+      disableFetch: this.disabled("fetch") || base.disableFetch,
+      disableBranchSwitch: this.disabled("branchSwitch") || base.disableBranchSwitch,
+      disableAgentFix: this.disabled("agentFix") || base.disableAgentFix,
+      disableRaisePR: this.disabled("raisePR") || base.disableRaisePR,
     });
   }
 
@@ -113,6 +134,10 @@ export class Autofixer {
   }
 
   // ── Private ────────────────────────────────────────────────────────────────
+
+  private disabled(stage: DisableStage): boolean {
+    return this.opts.disable?.includes(stage) ?? false;
+  }
 
   private buildWorkflowYml(): string {
     return [
