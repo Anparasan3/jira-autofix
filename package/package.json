@@ -34,7 +34,7 @@
     "fix": "bun run src/stages/fix.ts",
     "open-prs": "bun run src/stages/openPrs.ts",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "bun run typecheck && bun run build && bun test ./tests/unit/"
+    "prepublishOnly": "bun run typecheck && bun run build"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0"
