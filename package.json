@@ -5,7 +5,8 @@
   "scripts": {
     "build": "bun run --cwd package build",
     "typecheck": "bun run --cwd package typecheck",
-    "test": "bun run --cwd test-package test"
+    "test": "bun run --cwd test-package test",
+    "git:delete-tag": "git tag -d $(git tag -l 'v*') && git push --delete origin $(git tag -l 'v*')"
   },
   "workspaces": [
     "package"
