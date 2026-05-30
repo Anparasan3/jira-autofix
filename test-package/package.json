@@ -1,7 +1,7 @@
 {
   "name": "test-package",
   "version": "1.0.0",
-  "description": "Sample Bun app used to test @anpu/jira-autofix as a real consumer.",
+  "description": "Sample Bun app used to test jira-autofix as a real consumer.",
   "private": true,
   "scripts": {
     "dev": "bun run src/index.ts",
@@ -15,7 +15,7 @@
     "jira-autofix:open-prs": "bun run ../package/src/stages/openPrs.ts"
   },
   "dependencies": {
-    "@anpu/jira-autofix": "file:../package/dist"
+    "jira-autofix": "file:../package/dist"
   },
   "devDependencies": {
     "bun-types": "^1.3.14",

@@ -1,4 +1,4 @@
-import autofixer from "@anpu/jira-autofix";
+import autofixer from "jira-autofix";
 
 const fixer = autofixer.init();
 

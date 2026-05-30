@@ -1,5 +1,5 @@
 {
-  "name": "@anpu/jira-autofix",
+  "name": "jira-autofix",
   "version": "1.1.0",
   "description": "Fetch open Jira issues, auto-fix them with Claude, and open GitHub PRs — works in any project.",
   "author": "Anparasan",

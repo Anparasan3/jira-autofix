@@ -1,10 +1,10 @@
-# @anpu/jira-autofix
+# jira-autofix
 
 > Fetch open Jira issues → auto-fix them with Claude → open GitHub PRs.
 > Works in **any** project — just point it at your repo with the env vars below.
 
-[![npm](https://img.shields.io/npm/v/@anpu/jira-autofix)](https://www.npmjs.com/package/@anpu/jira-autofix)
-[![license](https://img.shields.io/npm/l/@anpu/jira-autofix)](LICENSE)
+[![npm](https://img.shields.io/npm/v/jira-autofix)](https://www.npmjs.com/package/jira-autofix)
+[![license](https://img.shields.io/npm/l/jira-autofix)](LICENSE)
 
 ---
 
@@ -33,7 +33,7 @@ No `gh` CLI, no additional installs.
 
 ```bash
 # From YOUR project root
-bunx @anpu/jira-autofix
+bunx jira-autofix
 ```
 
 Create a `.env` file in your project root first (see [Setup](#setup)).
@@ -90,16 +90,16 @@ extra setup.
 
 ```bash
 # Standard run — processes up to MAX_ISSUES open issues
-bunx @anpu/jira-autofix
+bunx jira-autofix
 
 # Dry run — see what would happen without making any commits or PRs
-DRY_RUN=true bunx @anpu/jira-autofix
+DRY_RUN=true bunx jira-autofix
 
 # Process more issues
-MAX_ISSUES=10 bunx @anpu/jira-autofix
+MAX_ISSUES=10 bunx jira-autofix
 
 # Use Opus for complex multi-file issues
-JIRA_AUTOFIX_MODEL=claude-opus-4-7 JIRA_AUTOFIX_MAX_TOKENS=16000 bunx @anpu/jira-autofix
+JIRA_AUTOFIX_MODEL=claude-opus-4-7 JIRA_AUTOFIX_MAX_TOKENS=16000 bunx jira-autofix
 ```
 
 ---

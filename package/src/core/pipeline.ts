@@ -58,7 +58,7 @@ export function buildPrBody(issue: JiraIssue, jiraBaseUrl: string): string {
     issue.description ? `> ${issue.description.replace(/\n/g, "\n> ")}` : "",
     "",
     "---",
-    "🤖 Generated with [@anpu/jira-autofix](https://www.npmjs.com/package/@anpu/jira-autofix)",
+    "🤖 Generated with [jira-autofix](https://www.npmjs.com/package/jira-autofix)",
   ].join("\n");
 }
 

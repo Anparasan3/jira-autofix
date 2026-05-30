@@ -1,8 +1,8 @@
 /**
- * autofixer — fluent API for @anpu/jira-autofix
+ * autofixer — fluent API for jira-autofix
  *
  * Usage:
- *   import autofixer from "@anpu/jira-autofix";
+ *   import autofixer from "jira-autofix";
  *
  *   // Run the pipeline once
  *   const fixer = autofixer.init();

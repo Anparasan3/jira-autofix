@@ -1,13 +1,13 @@
 /**
- * @anpu/jira-autofix — public library API
+ * jira-autofix — public library API
  *
  * Default import — fluent API:
- *   import autofixer from "@anpu/jira-autofix";
+ *   import autofixer from "jira-autofix";
  *   await autofixer.init({ schedule: "0 9 * * 1-5" }).start();
  *   autofixer.init().generateWorkflow();
  *
  * Named imports — lower-level utilities:
- *   import { runPipeline, buildPrBody, issueToBranch } from "@anpu/jira-autofix";
+ *   import { runPipeline, buildPrBody, issueToBranch } from "jira-autofix";
  */
 
 // ── Fluent API (default export) ────────────────────────────────────────────

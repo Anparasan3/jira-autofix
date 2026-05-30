@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * @anpu/jira-autofix — CLI entry point
+ * jira-autofix — CLI entry point
  *
  * Modes (select with --mode=<cli|rest>):
  *
@@ -28,10 +28,10 @@
  *   GITHUB_MODE              GitHub transport: "rest" (default) or "cli"
  *
  * Usage:
- *   bunx @anpu/jira-autofix                  # CLI mode (default)
- *   bunx @anpu/jira-autofix --mode=rest      # REST server mode
- *   DRY_RUN=true bunx @anpu/jira-autofix
- *   GITHUB_MODE=cli bunx @anpu/jira-autofix
+ *   bunx jira-autofix                  # CLI mode (default)
+ *   bunx jira-autofix --mode=rest      # REST server mode
+ *   DRY_RUN=true bunx jira-autofix
+ *   GITHUB_MODE=cli bunx jira-autofix
  */
 
 import { loadConfig } from "./core/config";

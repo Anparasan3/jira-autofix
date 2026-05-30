@@ -1,8 +1,8 @@
-# @anpu/jira-autofix — Agent Guide
+# jira-autofix — Agent Guide
 
 This is a **Bun CLI package** (not a web app). It fetches open Jira issues,
 fixes them with Claude, and opens GitHub PRs — usable in any project via
-`bunx @anpu/jira-autofix`.
+`bunx jira-autofix`.
 
 ---
 
