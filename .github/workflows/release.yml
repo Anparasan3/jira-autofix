@@ -12,11 +12,10 @@ on:
 
 jobs:
   release:
-    name: Build & Publish
+    name: Tag & GitHub Release
     runs-on: ubuntu-latest
     permissions:
       contents: write    # create tags + GitHub Releases
-      id-token: write    # OIDC provenance for npm
 
     steps:
       # ── Checkout ────────────────────────────────────────────────────────────
@@ -27,18 +26,18 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
-      # ── Read version from package.json ────────────────────────────────────
+      # ── Read version ──────────────────────────────────────────────────────
       - name: Read version
         id: pkg
         run: echo "version=$(jq -r .version package/package.json)" >> $GITHUB_OUTPUT
 
-      # ── Skip if this version tag already exists ───────────────────────────
+      # ── Skip if tag already exists ────────────────────────────────────────
       - name: Check existing tag
         id: guard
         run: |
           if git ls-remote --tags origin "refs/tags/v${{ steps.pkg.outputs.version }}" | grep -q .; then
             echo "skip=true" >> $GITHUB_OUTPUT
-            echo "⏭  Tag v${{ steps.pkg.outputs.version }} already exists — skipping release"
+            echo "⏭  Tag v${{ steps.pkg.outputs.version }} already exists — skipping"
           else
             echo "skip=false" >> $GITHUB_OUTPUT
             echo "🚀  Releasing v${{ steps.pkg.outputs.version }}"
@@ -69,7 +68,7 @@ jobs:
           git tag v${{ steps.pkg.outputs.version }} -m "Release v${{ steps.pkg.outputs.version }}"
           git push origin v${{ steps.pkg.outputs.version }}
 
-      # ── GitHub Release (auto-generated notes from commits) ────────────────
+      # ── GitHub Release ────────────────────────────────────────────────────
       - name: Create GitHub Release
         if: steps.guard.outputs.skip == 'false'
         uses: softprops/action-gh-release@v2
@@ -78,18 +77,6 @@ jobs:
           name: v${{ steps.pkg.outputs.version }}
           generate_release_notes: true
 
-      # ── Publish to npm ────────────────────────────────────────────────────
-      # Requires npm account 2FA set to "Authorization only" (not "Auth + publishing")
-      # npmjs.com → your avatar → Profile → Two-factor Authentication → Modify 2FA
-      - uses: actions/setup-node@v4
-        if: steps.guard.outputs.skip == 'false'
-        with:
-          node-version: "20"
-          registry-url: "https://registry.npmjs.org"
-
-      - name: Publish to npm
-        if: steps.guard.outputs.skip == 'false'
-        run: npm publish --access public --provenance
-        working-directory: package
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # ── npm publish is done manually after CI (OTP required) ─────────────
+      # From your machine:
+      #   cd package && npm publish --access public
