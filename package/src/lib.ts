@@ -20,7 +20,7 @@ export type { JiraClientConfig, JiraIssue } from "./jiraClient";
 
 // ── Config ─────────────────────────────────────────────────────────────────
 export { loadConfig } from "./config";
-export type { Config, GithubMode } from "./config";
+export type { Config, GitHubMode } from "./config";
 
 // ── Context ────────────────────────────────────────────────────────────────
 export { buildContext } from "./context";
@@ -46,7 +46,7 @@ export {
   git,
   issueToBranch,
   remoteBranchExists,
-} from "./github/gitUtils";
+} from "./github/git";
 
 // ── Shared types ───────────────────────────────────────────────────────────
 export type { BranchRecord } from "./types";

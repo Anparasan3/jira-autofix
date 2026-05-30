@@ -20,7 +20,7 @@
 
 import { mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
-import type { GithubMode } from "./config";
+import type { GitHubMode } from "./config";
 import { loadConfig } from "./config";
 import type { PipelineResult } from "./pipeline";
 import { runPipeline } from "./pipeline";
@@ -54,7 +54,7 @@ export interface AutofixerOptions {
   /** Claude max output tokens (overrides JIRA_AUTOFIX_MAX_TOKENS env var). */
   maxTokens?: number;
   /** GitHub transport: "rest" (default) or "cli" (overrides GITHUB_MODE env var). */
-  githubMode?: GithubMode;
+  githubMode?: GitHubMode;
   /** HTTP port for serve() (overrides PORT env var). */
   port?: number;
   /**

@@ -13,7 +13,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { execSync } from "child_process";
 import { existsSync, readdirSync, readFileSync } from "fs";
 import { join } from "path";
-import type { JiraIssue } from "../../jiraClient";
+import type { JiraIssue } from "../jiraClient";
 
 export interface FileChange {
   path: string;

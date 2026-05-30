@@ -18,7 +18,7 @@ import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { loadConfig } from "../config";
 import { buildContext } from "../context";
-import { fetchOrigin, git, issueToBranch, remoteBranchExists } from "../github/gitUtils";
+import { fetchOrigin, git, issueToBranch, remoteBranchExists } from "../github/git";
 import type { JiraIssue } from "../jiraClient";
 import { buildPrBody, fixBranch } from "../pipeline";
 import type { BranchRecord } from "../types";

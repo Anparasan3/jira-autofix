@@ -16,7 +16,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { loadConfig } from "../config";
 import { createPullRequest, getPullRequestUrl } from "../github/api";
-import { git } from "../github/gitUtils";
+import { git } from "../github/git";
 import { JiraClient } from "../jiraClient";
 import type { BranchRecord } from "../types";
 

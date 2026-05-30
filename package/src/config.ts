@@ -16,7 +16,7 @@
  *                      GH_PAT / GITHUB_TOKEN are not required in this mode.
  */
 
-export type GithubMode = "cli" | "rest";
+export type GitHubMode = "cli" | "rest";
 
 export interface Config {
   // Jira
@@ -34,7 +34,7 @@ export interface Config {
 
   // GitHub
   ghToken: string;
-  githubMode: GithubMode;
+  githubMode: GitHubMode;
 
   // Behaviour
   baseBranch: string;
@@ -72,13 +72,13 @@ export function loadConfig(): Config {
     agentMaxTokens: Number(process.env["JIRA_AUTOFIX_MAX_TOKENS"] ?? "8096"),
 
     // GitHub transport — "cli" or "rest" (default: "rest")
-    githubMode: (process.env["GITHUB_MODE"] ?? "rest") as GithubMode,
+    githubMode: (process.env["GITHUB_MODE"] ?? "rest") as GitHubMode,
 
     // GitHub token — GH_PAT takes priority (local dev), then GITHUB_TOKEN (CI).
     // Only required in REST mode; skipped in CLI mode (gh CLI manages its own auth).
     ghToken: (() => {
       const token = process.env["GH_PAT"] || process.env["GITHUB_TOKEN"] || "";
-      const mode = (process.env["GITHUB_MODE"] ?? "rest") as GithubMode;
+      const mode = (process.env["GITHUB_MODE"] ?? "rest") as GitHubMode;
       if (!token && mode === "rest") missing.push("GH_PAT or GITHUB_TOKEN");
       return token;
     })(),

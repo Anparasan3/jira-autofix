@@ -20,7 +20,7 @@ import {
   git,
   issueToBranch,
   remoteBranchExists,
-} from "./github/gitUtils";
+} from "./github/git";
 import { JiraClient } from "./jiraClient";
 import type { JiraIssue } from "./jiraClient";
 

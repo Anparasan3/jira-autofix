@@ -12,12 +12,12 @@
  */
 
 import { execSync } from "child_process";
-import type { GithubMode } from "../config";
+import type { GitHubMode } from "../config";
 
 // ── Shared types ────────────────────────────────────────────────────────────
 
 export interface PullRequestOptions {
-  mode: GithubMode;
+  mode: GitHubMode;
   /** REST mode: required. CLI mode: ignored (gh uses its own auth). */
   token: string;
   /** REST mode: required for repo parsing. CLI mode: ignored. */
