@@ -6,16 +6,14 @@
   "scripts": {
     "dev": "bun run src/index.ts",
     "test": "bun test",
-    "test:programmatic": "bun test tests/programmatic.test.ts",
-    "test:server": "bun test tests/server.test.ts",
-    "jira-autofix": "bun run ../package/src/index.ts",
-    "jira-autofix:serve": "bun run ../package/src/index.ts --mode=rest",
-    "jira-autofix:fetch": "bun run ../package/src/stages/fetch.ts",
-    "jira-autofix:fix": "bun run ../package/src/stages/fix.ts",
-    "jira-autofix:open-prs": "bun run ../package/src/stages/openPrs.ts"
+    "jira-autofix": "bun run ../src/index.ts",
+    "jira-autofix:serve": "bun run ../src/index.ts --mode=rest",
+    "jira-autofix:fetch": "bun run ../src/stages/fetch.ts",
+    "jira-autofix:fix": "bun run ../src/stages/fix.ts",
+    "jira-autofix:open-prs": "bun run ../src/stages/openPrs.ts"
   },
   "dependencies": {
-    "jira-autofix": "file:../package/dist"
+    "jira-autofix": "file:../dist"
   },
   "devDependencies": {
     "bun-types": "^1.3.14",

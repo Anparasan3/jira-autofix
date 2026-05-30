@@ -29,7 +29,7 @@ jobs:
       # ── Read version ──────────────────────────────────────────────────────
       - name: Read version
         id: pkg
-        run: echo "version=$(jq -r .version package/package.json)" >> $GITHUB_OUTPUT
+        run: echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
 
       # ── Skip if tag already exists ────────────────────────────────────────
       - name: Check existing tag
@@ -47,17 +47,17 @@ jobs:
       - name: Install dependencies
         if: steps.guard.outputs.skip == 'false'
         run: bun install
-        working-directory: package
+        
 
       - name: Typecheck
         if: steps.guard.outputs.skip == 'false'
         run: bun run typecheck
-        working-directory: package
+        
 
       - name: Build
         if: steps.guard.outputs.skip == 'false'
         run: bun run build
-        working-directory: package
+        
 
       # ── Create git tag ────────────────────────────────────────────────────
       - name: Create tag

@@ -1,17 +1,52 @@
 {
   "name": "jira-autofix",
-  "private": true,
-  "type": "module",
+  "version": "1.1.0",
+  "description": "Fetch open Jira issues, auto-fix them with Claude, and open GitHub PRs — works in any project.",
+  "author": "Anparasan",
+  "license": "MIT",
+  "keywords": ["jira", "claude", "ai", "automation", "github", "pr", "autofix"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Anparasan3/jira-autofix"
+  },
+  "main": "./dist/lib.js",
+  "types": "./dist/lib.d.ts",
+  "exports": {
+    ".": "./dist/lib.js",
+    "./server": "./dist/core/server.js"
+  },
+  "bin": {
+    "jira-autofix": "./dist/index.js",
+    "jira-autofix-fetch": "./dist/stages/fetch.js",
+    "jira-autofix-fix": "./dist/stages/fix.js",
+    "jira-autofix-open-prs": "./dist/stages/openPrs.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
-    "build": "bun run --cwd package build",
-    "typecheck": "bun run --cwd package typecheck",
-    "test": "bun run --cwd test-package test",
+    "prepare": "bun run build",
+    "build": "bun build src/lib.ts src/index.ts src/core/server.ts src/stages/fetch.ts src/stages/fix.ts src/stages/openPrs.ts --outdir dist --target bun && bunx tsc -p tsconfig.build.json && bun run scripts/gen-dist-pkg.ts",
+    "start": "bun run src/index.ts",
+    "serve": "bun run src/index.ts --mode=rest",
+    "fetch": "bun run src/stages/fetch.ts",
+    "fix": "bun run src/stages/fix.ts",
+    "open-prs": "bun run src/stages/openPrs.ts",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run typecheck && bun run build",
     "git:delete-tag": "git tag -d $(git tag -l 'v*') && git push --delete origin $(git tag -l 'v*')"
   },
-  "workspaces": [
-    "package"
-  ],
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=5"
+  },
+  "engines": {
+    "bun": ">=1.3"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "bun-types": "^1.3.14"
   }
 }
