@@ -15,9 +15,9 @@
 
 import { writeFileSync } from "fs";
 import { join } from "path";
-import { loadConfig } from "../config";
-import { JiraClient } from "../jiraClient";
-import type { JiraIssue } from "../jiraClient";
+import { loadConfig } from "../core/config";
+import { JiraClient } from "../jira/client";
+import type { JiraIssue } from "../jira/client";
 
 const cfg = loadConfig();
 

@@ -14,11 +14,11 @@
 
 import { readFileSync } from "fs";
 import { join } from "path";
-import { loadConfig } from "../config";
+import { loadConfig } from "../core/config";
 import { createPullRequest, getPullRequestUrl } from "../github/api";
 import { git } from "../github/git";
-import { JiraClient } from "../jiraClient";
-import type { BranchRecord } from "../types";
+import { JiraClient } from "../jira/client";
+import type { BranchRecord } from "../core/types";
 
 const ROOT = process.cwd();
 const cfg = loadConfig();

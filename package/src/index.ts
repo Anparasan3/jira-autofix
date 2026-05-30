@@ -34,9 +34,9 @@
  *   GITHUB_MODE=cli bunx @anpu/jira-autofix
  */
 
-import { loadConfig } from "./config";
-import { runPipeline } from "./pipeline";
-import { startServer } from "./server";
+import { loadConfig } from "./core/config";
+import { runPipeline } from "./core/pipeline";
+import { startServer } from "./core/server";
 
 // ── Mode flag ──────────────────────────────────────────────────────────────
 

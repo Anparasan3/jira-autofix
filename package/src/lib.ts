@@ -11,30 +11,30 @@
  */
 
 // ── Fluent API (default export) ────────────────────────────────────────────
-export { default } from "./autofixer";
-export type { Autofixer, AutofixerOptions, DisableStage } from "./autofixer";
+export { default } from "./core/autofixer";
+export type { Autofixer, AutofixerOptions, DisableStage } from "./core/autofixer";
 
 // ── Jira ───────────────────────────────────────────────────────────────────
-export { JiraClient } from "./jiraClient";
-export type { JiraClientConfig, JiraIssue } from "./jiraClient";
+export { JiraClient } from "./jira/client";
+export type { JiraClientConfig, JiraIssue } from "./jira/client";
 
 // ── Config ─────────────────────────────────────────────────────────────────
-export { loadConfig } from "./config";
-export type { Config, GitHubMode } from "./config";
+export { loadConfig } from "./core/config";
+export type { Config, GitHubMode } from "./core/config";
 
 // ── Context ────────────────────────────────────────────────────────────────
-export { buildContext } from "./context";
+export { buildContext } from "./core/context";
 
 // ── Claude agent ───────────────────────────────────────────────────────────
 export { generateFix } from "./agents/claude";
 export type { FileChange } from "./agents/claude";
 
 // ── Pipeline ───────────────────────────────────────────────────────────────
-export { buildPrBody, fixBranch, runPipeline } from "./pipeline";
-export type { FixBranchResult, IssueResult, PipelineResult } from "./pipeline";
+export { buildPrBody, fixBranch, runPipeline } from "./core/pipeline";
+export type { FixBranchResult, IssueResult, PipelineResult } from "./core/pipeline";
 
 // ── REST server ────────────────────────────────────────────────────────────
-export { startServer } from "./server";
+export { startServer } from "./core/server";
 
 // ── GitHub ─────────────────────────────────────────────────────────────────
 export { createPullRequest, getPullRequestUrl } from "./github/api";
@@ -49,4 +49,4 @@ export {
 } from "./github/git";
 
 // ── Shared types ───────────────────────────────────────────────────────────
-export type { BranchRecord } from "./types";
+export type { BranchRecord } from "./core/types";

@@ -16,12 +16,12 @@
 
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { loadConfig } from "../config";
-import { buildContext } from "../context";
+import { loadConfig } from "../core/config";
+import { buildContext } from "../core/context";
 import { fetchOrigin, git, issueToBranch, remoteBranchExists } from "../github/git";
-import type { JiraIssue } from "../jiraClient";
-import { buildPrBody, fixBranch } from "../pipeline";
-import type { BranchRecord } from "../types";
+import type { JiraIssue } from "../jira/client";
+import { buildPrBody, fixBranch } from "../core/pipeline";
+import type { BranchRecord } from "../core/types";
 
 const ROOT = process.cwd();
 const cfg = loadConfig();

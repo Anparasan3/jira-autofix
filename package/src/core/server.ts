@@ -9,7 +9,7 @@
  * All config comes from env vars set at startup — no per-request overrides.
  */
 
-import pkg from "../package.json";
+import pkg from "../../package.json";
 import { loadConfig } from "./config";
 import { runPipeline } from "./pipeline";
 

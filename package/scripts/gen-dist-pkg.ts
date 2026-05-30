@@ -22,8 +22,8 @@ const distPkg = {
       types: "./lib.d.ts",
     },
     "./server": {
-      import: "./server.js",
-      types: "./server.d.ts",
+      import: "./core/server.js",
+      types: "./core/server.d.ts",
     },
   },
   bin: {

@@ -1,4 +1,4 @@
-import type { JiraIssue } from "./jiraClient";
+import type { JiraIssue } from "../jira/client";
 
 export interface BranchRecord {
   issueKey: string;

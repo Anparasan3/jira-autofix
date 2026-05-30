@@ -12,7 +12,7 @@
  */
 
 import { execSync } from "child_process";
-import type { GitHubMode } from "../config";
+import type { GitHubMode } from "../core/config";
 
 // ── Shared types ────────────────────────────────────────────────────────────
 

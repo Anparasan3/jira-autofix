@@ -3,7 +3,7 @@
  */
 
 import { execSync } from "child_process";
-import type { JiraIssue } from "../jiraClient";
+import type { JiraIssue } from "../jira/client";
 
 export function git(cmd: string, cwd: string): string {
   return execSync(`git ${cmd}`, { cwd, encoding: "utf8" }).trim();

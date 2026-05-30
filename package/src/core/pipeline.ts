@@ -10,19 +10,19 @@
 
 import { mkdirSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
-import { generateFix } from "./agents/claude";
+import { generateFix } from "../agents/claude";
 import type { Config } from "./config";
 import { buildContext } from "./context";
-import { createPullRequest, getPullRequestUrl } from "./github/api";
+import { createPullRequest, getPullRequestUrl } from "../github/api";
 import {
   fetchOrigin,
   getRemoteUrl,
   git,
   issueToBranch,
   remoteBranchExists,
-} from "./github/git";
-import { JiraClient } from "./jiraClient";
-import type { JiraIssue } from "./jiraClient";
+} from "../github/git";
+import { JiraClient } from "../jira/client";
+import type { JiraIssue } from "../jira/client";
 
 // ── Public types ────────────────────────────────────────────────────────────
 

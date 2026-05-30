@@ -1,0 +1,108 @@
+name: Release
+
+# Triggers:
+#   - Automatically when package/package.json is updated on master (version bump)
+#   - Manually via the Actions tab (workflow_dispatch)
+on:
+  push:
+    branches: [master]
+    paths:
+      - "package/package.json"
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Build & Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write    # create tags + GitHub Releases
+      packages: write    # publish to GitHub Packages
+
+    steps:
+      # ── Checkout ────────────────────────────────────────────────────────────
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+
+      - uses: oven-sh/setup-bun@v2
+
+      # ── Read version from package.json ────────────────────────────────────
+      - name: Read version
+        id: pkg
+        run: echo "version=$(jq -r .version package/package.json)" >> $GITHUB_OUTPUT
+
+      # ── Skip if this version tag already exists ───────────────────────────
+      - name: Check existing tag
+        id: guard
+        run: |
+          if git ls-remote --tags origin "refs/tags/v${{ steps.pkg.outputs.version }}" | grep -q .; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "⏭  Tag v${{ steps.pkg.outputs.version }} already exists — skipping release"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "🚀  Releasing v${{ steps.pkg.outputs.version }}"
+          fi
+
+      # ── Install, typecheck, build ─────────────────────────────────────────
+      - name: Install dependencies
+        if: steps.guard.outputs.skip == 'false'
+        run: bun install
+        working-directory: package
+
+      - name: Typecheck
+        if: steps.guard.outputs.skip == 'false'
+        run: bun run typecheck
+        working-directory: package
+
+      - name: Build
+        if: steps.guard.outputs.skip == 'false'
+        run: bun run build
+        working-directory: package
+
+      # ── Create git tag ────────────────────────────────────────────────────
+      - name: Create tag
+        if: steps.guard.outputs.skip == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag v${{ steps.pkg.outputs.version }} -m "Release v${{ steps.pkg.outputs.version }}"
+          git push origin v${{ steps.pkg.outputs.version }}
+
+      # ── GitHub Release (auto-generated notes from commits) ────────────────
+      - name: Create GitHub Release
+        if: steps.guard.outputs.skip == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.pkg.outputs.version }}
+          name: v${{ steps.pkg.outputs.version }}
+          generate_release_notes: true
+
+      # ── Publish to npm registry ───────────────────────────────────────────
+      - uses: actions/setup-node@v4
+        if: steps.guard.outputs.skip == 'false'
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Publish to npm
+        if: steps.guard.outputs.skip == 'false'
+        run: npm publish --access public
+        working-directory: package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # ── Publish to GitHub Packages ────────────────────────────────────────
+      - uses: actions/setup-node@v4
+        if: steps.guard.outputs.skip == 'false'
+        with:
+          node-version: "20"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@anpu"
+
+      - name: Publish to GitHub Packages
+        if: steps.guard.outputs.skip == 'false'
+        run: npm publish --access public
+        working-directory: package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
