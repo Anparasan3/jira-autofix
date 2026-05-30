@@ -26,6 +26,7 @@
     "src"
   ],
   "scripts": {
+    "prepare": "bun run build",
     "build": "bun build src/lib.ts src/index.ts src/core/server.ts src/stages/fetch.ts src/stages/fix.ts src/stages/openPrs.ts --outdir dist --target bun && bunx tsc -p tsconfig.build.json && bun run scripts/gen-dist-pkg.ts",
     "start": "bun run src/index.ts",
     "serve": "bun run src/index.ts --mode=rest",

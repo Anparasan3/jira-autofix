@@ -1,16 +1,16 @@
 {
   "name": "jira-autofix",
-  "module": "index.ts",
-  "type": "module",
   "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
+  "type": "module",
+  "scripts": {
+    "build": "bun run --cwd package build",
+    "typecheck": "bun run --cwd package typecheck",
+    "test": "bun run --cwd test-package test"
   },
   "workspaces": [
-    "package",
-    "test-package"
-  ]
+    "package"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
 }
