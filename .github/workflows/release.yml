@@ -16,8 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write    # create tags + GitHub Releases
-      packages: write    # publish to GitHub Packages
-      id-token: write    # npm provenance (OIDC — skips OTP requirement)
+      id-token: write    # OIDC provenance for npm
 
     steps:
       # ── Checkout ────────────────────────────────────────────────────────────
@@ -79,7 +78,9 @@ jobs:
           name: v${{ steps.pkg.outputs.version }}
           generate_release_notes: true
 
-      # ── Publish to npm registry ───────────────────────────────────────────
+      # ── Publish to npm ────────────────────────────────────────────────────
+      # Requires npm account 2FA set to "Authorization only" (not "Auth + publishing")
+      # npmjs.com → your avatar → Profile → Two-factor Authentication → Modify 2FA
       - uses: actions/setup-node@v4
         if: steps.guard.outputs.skip == 'false'
         with:
@@ -92,18 +93,3 @@ jobs:
         working-directory: package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      # ── Publish to GitHub Packages ────────────────────────────────────────
-      - uses: actions/setup-node@v4
-        if: steps.guard.outputs.skip == 'false'
-        with:
-          node-version: "20"
-          registry-url: "https://npm.pkg.github.com"
-          scope: "@anpu"
-
-      - name: Publish to GitHub Packages
-        if: steps.guard.outputs.skip == 'false'
-        run: npm publish --access public
-        working-directory: package
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
