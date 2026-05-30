@@ -17,6 +17,7 @@ jobs:
     permissions:
       contents: write    # create tags + GitHub Releases
       packages: write    # publish to GitHub Packages
+      id-token: write    # npm provenance (OIDC — skips OTP requirement)
 
     steps:
       # ── Checkout ────────────────────────────────────────────────────────────
@@ -87,7 +88,7 @@ jobs:
 
       - name: Publish to npm
         if: steps.guard.outputs.skip == 'false'
-        run: npm publish --access public
+        run: npm publish --access public --provenance
         working-directory: package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
